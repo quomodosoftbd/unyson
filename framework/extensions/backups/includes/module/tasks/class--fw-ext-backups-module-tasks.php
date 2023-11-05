@@ -1,7 +1,6 @@
 <?php if (!defined('FW')) die('Forbidden');
 
-class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
-{
+class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module {
 	/**
 	 * @var string
 	 *
@@ -35,12 +34,11 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 
 	private static $skip_shutdown_function = false;
 
-	public function _init()
-	{
-		require_once dirname(__FILE__) . '/entity/class-fw-ext-backups-task.php';
-		require_once dirname(__FILE__) . '/entity/class-fw-ext-backups-task-collection.php';
+	public function _init() {
+		require_once dirname(__FILE__) .'/entity/class-fw-ext-backups-task.php';
+		require_once dirname(__FILE__) .'/entity/class-fw-ext-backups-task-collection.php';
 
-		require_once dirname(__FILE__) . '/type/init.php'; // predefined task types
+		require_once dirname(__FILE__) .'/type/init.php'; // predefined task types
 
 		add_action(
 			'wp_ajax_nopriv_' . self::$wp_ajax_action,
@@ -57,14 +55,12 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 		add_filter(
 			'fw_ext_backups_db_export_exclude_option',
 			array($this, '_filter_fw_ext_backups_db_exclude_option'),
-			10,
-			2
+			10, 2
 		);
 		add_filter(
 			'fw_ext_backups_db_restore_exclude_option',
 			array($this, '_filter_fw_ext_backups_db_exclude_option'),
-			10,
-			2
+			10, 2
 		);
 		add_filter(
 			'fw_ext_backups_db_restore_keep_options',
@@ -83,21 +79,20 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 	 * @return FW_Ext_Backups_Task_Type[]
 	 * @internal
 	 */
-	public function _get_task_types(FW_Access_Key $access_key)
-	{
+	public function _get_task_types(FW_Access_Key $access_key) {
 		if (!in_array($access_key->get_key(), array('fw:ext:backups', 'fw:ext:backups:tasks'))) {
 			trigger_error('Method call denied', E_USER_ERROR);
 		}
 
 		if (is_null(self::$task_types)) {
 			if (!class_exists('_FW_Ext_Backups_Task_Type_Register')) {
-				require_once dirname(__FILE__) . '/class--fw-ext-backups-task-register.php';
+				require_once dirname(__FILE__) .'/class--fw-ext-backups-task-register.php';
 			}
 
 			$task_types = new _FW_Ext_Backups_Task_Type_Register();
 
 			if (!class_exists('FW_Ext_Backups_Task_Type')) {
-				require_once dirname(__FILE__) . '/class-fw-ext-backups-task-type.php';
+				require_once dirname(__FILE__) .'/class-fw-ext-backups-task-type.php';
 			}
 
 			do_action('fw_ext_backups_task_types_register', $task_types);
@@ -117,8 +112,7 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 	 * @return FW_Ext_Backups_Task_Type|null
 	 * @internal
 	 */
-	public function _get_task_type($type, FW_Access_Key $access_key)
-	{
+	public function _get_task_type($type, FW_Access_Key $access_key) {
 		if (!in_array($access_key->get_key(), array('fw:ext:backups', 'fw:ext:backups:tasks'))) {
 			trigger_error('Method call denied', E_USER_ERROR);
 		}
@@ -137,8 +131,7 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 	 *
 	 * @return null|string
 	 */
-	public function get_task_type_title($type, array $args = array(), $state = array())
-	{
+	public function get_task_type_title($type, array $args = array(), $state = array()) {
 		if (!is_array($state)) {
 			$state = array();
 		}
@@ -153,8 +146,7 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 	/**
 	 * @return FW_Extension_Backups
 	 */
-	private static function backups()
-	{
+	private static function backups() {
 		return fw_ext('backups');
 	}
 
@@ -166,8 +158,7 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 	/**
 	 * @return FW_Access_Key
 	 */
-	private static function get_access_key()
-	{
+	private static function get_access_key() {
 		if (empty(self::$access_key)) {
 			self::$access_key = new FW_Access_Key('fw:ext:backups:tasks');
 		}
@@ -175,10 +166,9 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 		return self::$access_key;
 	}
 
-	private function do_task_fail_action(FW_Ext_Backups_Task $task)
-	{
+	private function do_task_fail_action(FW_Ext_Backups_Task $task) {
 		if ($task->result_is_fail()) {
-			do_action('fw:ext:backups:task:fail', $task);
+			do_action( 'fw:ext:backups:task:fail', $task );
 		}
 	}
 
@@ -191,8 +181,7 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 	 * * Active task collection is empty (to set new active collection for execution)
 	 * * Need to update one task
 	 */
-	private function set_active_task_collection($collection)
-	{
+	private function set_active_task_collection($collection) {
 		if ($collection instanceof FW_Ext_Backups_Task_Collection) {
 			return update_option(
 				self::$wp_option_active_task_collection,
@@ -214,14 +203,13 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 	/**
 	 * @return FW_Ext_Backups_Task_Collection|null
 	 */
-	public function get_active_task_collection()
-	{
+	public function get_active_task_collection() {
 		if ($db_value = get_option(
 			self::$wp_option_active_task_collection,
 			null
 		)) {
 			return $this->check_and_fix_tasks(
-				FW_Ext_Backups_Task_Collection::from_array($db_value)
+				FW_Ext_Backups_Task_Collection::from_array( $db_value )
 			);
 		} else {
 			return $db_value;
@@ -233,8 +221,7 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 	 *
 	 * @return bool
 	 */
-	private function set_pending_task_collections(array $collections)
-	{
+	private function set_pending_task_collections(array $collections) {
 		/**
 		 * Do not store in database entities/instances
 		 * This gives the possibility to change/rename the entities in the future
@@ -255,8 +242,7 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 	/**
 	 * @return FW_Ext_Backups_Task_Collection[]
 	 */
-	public function get_pending_task_collections()
-	{
+	public function get_pending_task_collections() {
 		$collections = array();
 
 		$db_value = get_option(
@@ -275,42 +261,38 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 	 *
 	 * @return FW_Ext_Backups_Task_Collection|null
 	 */
-	private function check_and_fix_tasks($collection)
-	{
-		if ($collection instanceof FW_Ext_Backups_Task_Collection) {
-		} else {
+	private function check_and_fix_tasks($collection) {
+		if ($collection instanceof FW_Ext_Backups_Task_Collection) {} else {
 			return null;
 		}
 
 		$finished = true;
 
 		foreach ($collection->get_tasks() as $task) {
-			if (!$task->get_last_execution_start_time()) {
+			if ( ! $task->get_last_execution_start_time() ) {
 				// check only started tasks
 				$finished = false;
 				break;
 			}
 
 			// Check for problems and maybe finish (set failed)
-			if (!$task->result_is_finished()) {
-				if (!$this->_get_task_type($task->get_type(), self::get_access_key())) {
-					$task->set_result(new WP_Error(
-						'type_not_registered',
-						__('Task type not registered', 'fw')
+			if ( ! $task->result_is_finished() ) {
+				if ( ! $this->_get_task_type( $task->get_type(), self::get_access_key() ) ) {
+					$task->set_result( new WP_Error(
+						'type_not_registered', __( 'Task type not registered', 'fw' )
 					));
 				}
 
-				if ($task->get_last_execution_end_time()) { // step finished and should continue
-					if ($task->get_last_execution_end_time() + self::backups()->get_timeout() + 5 < time()) {
+				if ( $task->get_last_execution_end_time() ) { // step finished and should continue
+					if ( $task->get_last_execution_end_time() + self::backups()->get_timeout() + 5 < time() ) {
 						$task->set_result(new WP_Error(
-							'execution_stopped',
-							__('Execution stopped (next step did not started)', 'fw')
+							'execution_stopped', __( 'Execution stopped (next step did not started)', 'fw' )
 						));
 					}
 				} else { // is currently executing
 					{
 						if (
-							($task_type = $this->_get_task_type($task->get_type(), self::get_access_key()))
+							($task_type = $this->_get_task_type( $task->get_type(), self::get_access_key() ))
 							&&
 							($custom_timeout = $task_type->get_custom_timeout(
 								$task->get_args(),
@@ -322,38 +304,31 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 							$timeout = self::backups()->get_timeout();
 						}
 
-						if ($task->get_last_execution_start_time() + $timeout + 1 < time()) {
-							$task->set_result(new WP_Error(
-								'timeout',
-								__('The execution failed. Please check error.log', 'fw')
-							));
+						if ( $task->get_last_execution_start_time() + $timeout + 1 < time() ) {
+							$task->set_result( new WP_Error(
+								'timeout', __( 'The execution failed. Please check error.log', 'fw' )
+							) );
 						}
 					}
 				}
 
-				if ($task->result_is_fail()) {
+				if ( $task->result_is_fail() ) {
 					$task->set_last_execution_end_time(microtime(true));
 
-					$this->set_active_task_collection($collection);
+					$this->set_active_task_collection( $collection );
 
 					$this->do_task_fail_action($task);
 				}
 			}
 
-			if ($task->result_is_finished()) {
-				if ($task->result_is_fail()) {
-					do_action(
-						'fw:ext:backups:tasks:fail:id:' . $collection->get_id(),
-						$collection,
+			if ( $task->result_is_finished() ) {
+				if ( $task->result_is_fail() ) {
+					do_action( 'fw:ext:backups:tasks:fail:id:'. $collection->get_id(), $collection,
 						/** @since 2.0.23 */
-						$task
-					);
-					do_action(
-						'fw:ext:backups:tasks:fail',
-						$collection,
+						$task );
+					do_action( 'fw:ext:backups:tasks:fail', $collection,
 						/** @since 2.0.23 */
-						$task
-					);
+						$task );
 					break;
 				}
 			} else { // Stop on first executing (not finished) task
@@ -366,16 +341,17 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 			$this->set_active_task_collection(null);
 
 			// Allow the tasks to be executed again
-			file_put_contents($this->get_executed_tasks_path(), '');
+			file_put_contents( $this->get_executed_tasks_path(), '' );
 
-			do_action('fw:ext:backups:tasks:finish:id:' . $collection->get_id(), $collection);
+			do_action('fw:ext:backups:tasks:finish:id:'. $collection->get_id(), $collection);
 			do_action('fw:ext:backups:tasks:finish', $collection);
 
 			if (isset($task) && $task->result_is_fail()) {
 				// if last task is fail, then the collection was failed and foreach stopped
 			} else {
-				do_action('fw:ext:backups:tasks:success:id:' . $collection->get_id(), $collection);
+				do_action('fw:ext:backups:tasks:success:id:'. $collection->get_id(), $collection);
 				do_action('fw:ext:backups:tasks:success', $collection);
+
 			}
 
 			flush_rewrite_rules();
@@ -390,21 +366,20 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 	 * A task that started but did not finished
 	 * @return null|FW_Ext_Backups_Task
 	 */
-	public function get_executing_task()
-	{
+	public function get_executing_task() {
 		if ($collection = $this->get_active_task_collection()) {
 			foreach ($collection->get_tasks() as $task) {
-				if (!$task->get_last_execution_start_time()) {
+				if ( ! $task->get_last_execution_start_time() ) {
 					break;
-				} elseif (!$task->get_last_execution_end_time()) {
-					if ($task->result_is_finished()) { {
+				} elseif ( ! $task->get_last_execution_end_time() ) {
+					if ($task->result_is_finished()) {
+						{
 							$task->set_last_execution_end_time(microtime(true));
 							$task->set_result(new WP_Error(
-								'invalid_execution_end_time',
-								__('Invalid execution end time', 'fw')
+								'invalid_execution_end_time', __('Invalid execution end time', 'fw')
 							));
 
-							$this->set_active_task_collection($collection);
+							$this->set_active_task_collection( $collection );
 
 							$this->do_task_fail_action($task);
 						}
@@ -426,8 +401,7 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 	 * or with result null - never executed
 	 * @return null|FW_Ext_Backups_Task with result null|array
 	 */
-	public function get_pending_task()
-	{
+	public function get_pending_task() {
 		if ($this->get_executing_task()) {
 			return null;
 		}
@@ -438,14 +412,14 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 			$pending_task = null;
 
 			do {
-				foreach ($collection->get_tasks() as $task) {
-					if ($task->get_last_execution_start_time()) {
+				foreach ( $collection->get_tasks() as $task ) {
+					if ( $task->get_last_execution_start_time() ) {
 						unset($last_executed_task); // reset reference
 						$last_executed_task = $task;
 					} else {
 						if ($last_executed_task) {
-							if ($last_executed_task->get_last_execution_end_time()) {
-								if (is_array($last_executed_task->get_result())) { // result is a state and must continue
+							if ( $last_executed_task->get_last_execution_end_time() ) {
+								if ( is_array($last_executed_task->get_result()) ) { // result is a state and must continue
 									$pending_task = $last_executed_task;
 									break 2;
 								} elseif ($last_executed_task->result_is_success()) {
@@ -470,12 +444,12 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 					&&
 					$last_executed_task->get_last_execution_end_time()
 					&&
-					is_array($last_executed_task->get_result())
+					is_array( $last_executed_task->get_result() )
 				) {
 					$pending_task = $last_executed_task;
 					break;
 				}
-			} while (false);
+			} while(false);
 
 			return $pending_task;
 		} elseif ($collections = $this->get_pending_task_collections()) {
@@ -497,22 +471,20 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 		return null;
 	}
 
-	private function execute_pending_task()
-	{
-		if ($task = $this->get_pending_task()) {
-		} else {
+	private function execute_pending_task() {
+		if ($task = $this->get_pending_task()) {} else {
 			return false;
 		}
 
-		if ($task_type = $this->_get_task_type($task->get_type(), self::get_access_key())) {
-		} else {
+		if ($task_type = $this->_get_task_type($task->get_type(), self::get_access_key())) {} else {
 			return false; // must not happen, must be detected by $this->get_pending_task()
 		}
 
 		/**
 		 * Get all active tasks and keep a reference on current task
 		 * Then keep updating the task and flush/save active tasks on change
-		 */ {
+		 */
+		{
 			$task_id = $task->get_id();
 			unset($task);
 
@@ -540,31 +512,32 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 		 * Note: This is not guaranteed to work on all servers
 		 */
 		if (
-			($task_type = $this->_get_task_type($task->get_type(), self::get_access_key()))
+			($task_type = $this->_get_task_type( $task->get_type(), self::get_access_key() ))
 			&&
 			($custom_timeout = $task_type->get_custom_timeout(
 				$task->get_args(),
 				is_array($task->get_result()) ? $task->get_result() : array()
 			))
 		) {
-			@ini_set('memory_limit', apply_filters('admin_memory_limit', WP_MAX_MEMORY_LIMIT));
-			@set_time_limit(abs($custom_timeout));
+			@ini_set( 'memory_limit', apply_filters( 'admin_memory_limit', WP_MAX_MEMORY_LIMIT ) );
+			@set_time_limit( abs($custom_timeout) );
 		}
 
 		/**
 		 * Log in as super admin to prevent current_user_can() limitations
-		 */ {
+		 */
+		{
 			global $wpdb;
 
 			if (
 				($super_admin = $wpdb->get_results(
 					"SELECT user_id"
-						. " FROM $wpdb->usermeta"
-						. " WHERE `meta_key` = 'wp_user_level' AND `meta_value` = 10" // https://codex.wordpress.org/User_Levels#User_Levels_9_and_10
-						. " LIMIT 1"
+					." FROM $wpdb->usermeta"
+					." WHERE `meta_key` = 'wp_user_level' AND `meta_value` = 10" // https://codex.wordpress.org/User_Levels#User_Levels_9_and_10
+					." LIMIT 1"
 				))
 				&&
-				($super_admin = get_user_by('id', $super_admin[0]->user_id))
+				($super_admin = get_user_by('id', $super_admin[0]->user_id ))
 				&&
 				isset($super_admin->caps['administrator'])
 				&&
@@ -587,7 +560,7 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 			 * Fixes https://github.com/ThemeFuse/Unyson/issues/2116
 			 * @since 2.0.15
 			 */
-			do_action('fw:ext:backups:tasks:start:id:' . $collection->get_id(), $collection);
+			do_action('fw:ext:backups:tasks:start:id:'. $collection->get_id(), $collection);
 			do_action('fw:ext:backups:tasks:start', $collection);
 
 			unset($collection_tasks);
@@ -600,27 +573,24 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 			'task' => $task,
 		));
 
-		if ('POST' === $_SERVER['REQUEST_METHOD']) {
-			ob_start();
-		} // prevent execution abort on output (see 'blocking')
+		if ('POST' === $_SERVER['REQUEST_METHOD']) { ob_start(); } // prevent execution abort on output (see 'blocking')
 		try {
 			$task->set_result(
-				$task_type->execute($task->get_args(), $state)
+				$task_type->execute( $task->get_args(), $state )
 			);
 		} catch (Exception $e) {
 			$task->set_result(
 				new WP_Error('exception', $e->getMessage())
 			);
 		}
-		if ('POST' === $_SERVER['REQUEST_METHOD']) {
-			ob_end_clean();
-		}
+		if ('POST' === $_SERVER['REQUEST_METHOD']) { ob_end_clean(); }
 
 		self::$skip_shutdown_function = true;
 
 		$task->set_last_execution_end_time(microtime(true));
 
-		if (!(is_array($task->get_result())
+		if (!(
+			is_array($task->get_result())
 			||
 			is_string($task->get_result())
 			||
@@ -629,25 +599,24 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 			in_array($task->get_result(), array(true, false), true)
 		)) {
 			$task->set_result(new WP_Error(
-				'invalid_execution_result',
-				__('Invalid execution result', 'fw')
+				'invalid_execution_result', __('Invalid execution result', 'fw')
 			));
 		}
 
 		$this->set_active_task_collection($collection);
 
-		do_action('fw:ext:backups:task:executed', $task);
+		do_action( 'fw:ext:backups:task:executed', $task);
 
 		if ($task->result_is_finished()) {
-			do_action('fw:ext:backups:task:executed:finished', $task);
+			do_action( 'fw:ext:backups:task:executed:finished', $task );
 
 			if ($task->result_is_fail()) {
 				$this->do_task_fail_action($task);
 			} else {
-				do_action('fw:ext:backups:task:success', $task);
+				do_action( 'fw:ext:backups:task:success', $task );
 			}
 		} else {
-			do_action('fw:ext:backups:task:executed:unfinished', $task);
+			do_action( 'fw:ext:backups:task:executed:unfinished', $task );
 		}
 
 		$this->request_next_step_execution();
@@ -655,8 +624,7 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 		return true;
 	}
 
-	private function request_next_step_execution()
-	{
+	private function request_next_step_execution() {
 		if (
 			!($task = $this->get_pending_task())
 			||
@@ -675,7 +643,7 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 		/**
 		 * @since 2.0.23
 		 */
-		if (fw_is_cli()) {
+		if ( fw_is_cli() ) {
 			static $is_wp_cli_executing = false;
 			if ($is_wp_cli_executing) {
 				return false;
@@ -689,7 +657,7 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 		} else {
 			$http = new WP_Http();
 			$http->post(
-				site_url('wp-admin/admin-ajax.php'),
+				site_url( 'wp-admin/admin-ajax.php' ),
 				array(
 					/**
 					 * The request should start (in background) and current request should (continue and) stop
@@ -702,10 +670,10 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 					'body'      => array(
 						'action'            => self::$wp_ajax_action,
 						'token'             => md5(
-							defined('NONCE_SALT') ? NONCE_SALT : self::backups()->manifest->get_version()
+							defined( 'NONCE_SALT' ) ? NONCE_SALT : self::backups()->manifest->get_version()
 						),
-						'active_tasks_hash' => ($collection = $this->get_active_task_collection())
-							? md5(serialize($collection)) : ''
+						'active_tasks_hash' => ( $collection = $this->get_active_task_collection() )
+							? md5( serialize( $collection ) ) : ''
 					),
 				)
 			);
@@ -720,8 +688,7 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 	 * @return bool
 	 * @internal
 	 */
-	public function _request_next_step_execution(FW_Access_Key $access_key)
-	{
+	public function _request_next_step_execution(FW_Access_Key $access_key) {
 		if (!in_array($access_key->get_key(), array('fw:ext:backups', 'fw:ext:backups-demo'))) {
 			trigger_error('Method call denied', E_USER_ERROR);
 		}
@@ -743,8 +710,7 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 		return $this->request_next_step_execution();
 	}
 
-	public function _action_ajax_continue_pending_task()
-	{
+	public function _action_ajax_continue_pending_task() {
 		if (
 			!isset($_POST['token'])
 			||
@@ -804,8 +770,7 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 	 * The collection will be added in pending. If task manager is busy, it will be executed later.
 	 * @param FW_Ext_Backups_Task_Collection $collection
 	 */
-	public function execute_task_collection(FW_Ext_Backups_Task_Collection $collection)
-	{
+	public function execute_task_collection(FW_Ext_Backups_Task_Collection $collection) {
 		if ($collections = $this->get_pending_task_collections()) {
 			foreach ($collections as $i => $_collection) {
 				if ($_collection->get_id() === $collection->get_id()) {
@@ -821,8 +786,7 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 		$this->request_next_step_execution();
 	}
 
-	private function get_dirs($full = false)
-	{
+	private function get_dirs($full = false) {
 		$wp_upload_dir = wp_upload_dir();
 
 		$dirs = array(
@@ -851,22 +815,21 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 	 * @param bool $full
 	 * @return FW_Ext_Backups_Task_Collection
 	 */
-	public function add_backup_tasks(FW_Ext_Backups_Task_Collection $collection, $full = false)
-	{
+	public function add_backup_tasks(FW_Ext_Backups_Task_Collection $collection, $full = false) {
 		$full = (bool)$full;
 		$tmp_dir = self::backups()->get_tmp_dir();
 		$dirs = $this->get_dirs($full);
 		$id_prefix = 'backup:';
 
 		$collection->add_task(new FW_Ext_Backups_Task(
-			$id_prefix . 'tmp-dir-clean:before',
+			$id_prefix .'tmp-dir-clean:before',
 			'dir-clean',
 			array(
 				'dir' => $tmp_dir
 			)
 		));
 		$collection->add_task(new FW_Ext_Backups_Task(
-			$id_prefix . 'db-export',
+			$id_prefix .'db-export',
 			'db-export',
 			array(
 				'dir' => $tmp_dir,
@@ -874,13 +837,13 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 			)
 		));
 		$collection->add_task(new FW_Ext_Backups_Task(
-			$id_prefix . 'files-export',
+			$id_prefix .'files-export',
 			'files-export',
 			array(
 				'source_dirs' => $dirs,
-				'destination' => $tmp_dir . '/f',
-				'exclude_paths' => (is_multisite() && ($wp_upload_dir = wp_upload_dir()))
-					? array(fw_fix_path($wp_upload_dir['basedir']) . '/sites' => true)
+				'destination' => $tmp_dir .'/f',
+				'exclude_paths' => ( is_multisite() && ($wp_upload_dir = wp_upload_dir()) )
+					? array(fw_fix_path($wp_upload_dir['basedir']) .'/sites' => true)
 					: array(),
 			)
 		));
@@ -891,31 +854,27 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 			apply_filters('fw:ext:backups:add-backup-task:image-sizes-remove', true, $collection)
 		) {
 			$collection->add_task(new FW_Ext_Backups_Task(
-				$id_prefix . 'image-sizes-remove',
+				$id_prefix .'image-sizes-remove',
 				'image-sizes-remove',
 				array(
-					'uploads_dir' => $tmp_dir . '/f/uploads',
+					'uploads_dir' => $tmp_dir .'/f/uploads',
 				)
 			));
 		}
-		$collection->add_task(
-			new FW_Ext_Backups_Task(
-				$id_prefix . 'zip',
-				'zip',
-				array(
-					'source_dir' => $tmp_dir,
-					'destination_dir' => self::backups()->get_backups_dir(),
-				)
-			)
+		$collection->add_task(new FW_Ext_Backups_Task(
+			$id_prefix .'zip',
+			'zip',
+			array(
+				'source_dir' => $tmp_dir,
+				'destination_dir' => self::backups()->get_backups_dir(),
+			))
 		);
-		$collection->add_task(
-			new FW_Ext_Backups_Task(
-				$id_prefix . 'tmp-dir-clean:after',
-				'dir-clean',
-				array(
-					'dir' => $tmp_dir
-				)
-			)
+		$collection->add_task(new FW_Ext_Backups_Task(
+			$id_prefix .'tmp-dir-clean:after',
+			'dir-clean',
+			array(
+				'dir' => $tmp_dir
+			))
 		);
 
 		/** @since 2.0.16 */
@@ -948,40 +907,34 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 		$id_prefix = 'restore:';
 
 		if ($zip_path) {
-			$collection->add_task(
-				new FW_Ext_Backups_Task(
-					$id_prefix . 'unzip',
-					'unzip',
-					array(
-						'zip' => $zip_path,
-						'dir' => $tmp_dir,
-					)
-				)
+			$collection->add_task( new FW_Ext_Backups_Task(
+				$id_prefix . 'unzip',
+				'unzip',
+				array(
+					'zip' => $zip_path,
+					'dir' => $tmp_dir,
+				) )
 			);
 		}
-		$collection->add_task(
-			new FW_Ext_Backups_Task(
-				$id_prefix . 'files-restore',
-				'files-restore',
-				array(
-					'source_dir' => $tmp_dir . '/f',
-					'destinations' => $dirs,
-					'filesystem_args' => $filesystem_args,
-					'skip_dirs' => (is_multisite() && ($wp_upload_dir = wp_upload_dir()))
-						? array(fw_fix_path($wp_upload_dir['basedir']) . '/sites' => true)
-						: array(),
-				)
-			)
+		$collection->add_task(new FW_Ext_Backups_Task(
+			$id_prefix .'files-restore',
+			'files-restore',
+			array(
+				'source_dir' => $tmp_dir .'/f',
+				'destinations' => $dirs,
+				'filesystem_args' => $filesystem_args,
+				'skip_dirs' => ( is_multisite() && ($wp_upload_dir = wp_upload_dir()) )
+					? array(fw_fix_path($wp_upload_dir['basedir']) .'/sites' => true)
+					: array(),
+			))
 		);
-		$collection->add_task(
-			new FW_Ext_Backups_Task(
-				$id_prefix . 'db-restore',
-				'db-restore',
-				array(
-					'dir' => $tmp_dir,
-					'full' => $full,
-				)
-			)
+		$collection->add_task(new FW_Ext_Backups_Task(
+			$id_prefix .'db-restore',
+			'db-restore',
+			array(
+				'dir' => $tmp_dir,
+				'full' => $full,
+			))
 		);
 		if (
 			!$full
@@ -989,13 +942,13 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 			apply_filters('fw:ext:backups:add-restore-task:image-sizes-restore', true, $collection)
 		) {
 			$collection->add_task(new FW_Ext_Backups_Task(
-				$id_prefix . 'image-sizes-restore',
+				$id_prefix .'image-sizes-restore',
 				'image-sizes-restore',
 				array()
 			));
 		}
 		$collection->add_task(new FW_Ext_Backups_Task(
-			$id_prefix . 'tmp-dir-clean:after',
+			$id_prefix .'tmp-dir-clean:after',
 			'dir-clean',
 			array('dir' => $tmp_dir)
 		));
@@ -1013,12 +966,11 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 	/**
 	 * @param bool $full
 	 */
-	public function do_backup($full = false)
-	{
+	public function do_backup($full = false) {
 		$this->execute_task_collection(
 			$this->add_backup_tasks(
 				new FW_Ext_Backups_Task_Collection(
-					($full ? 'full' : 'content') . '-backup'
+					($full ? 'full' : 'content') .'-backup'
 				),
 				$full
 			)
@@ -1030,15 +982,14 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 	 * @param string $zip_path
 	 * @param array $filesystem_args {}|{hostname: '', username: '', password: '', connection_type: ''}
 	 */
-	public function do_restore($zip_path, $full = false, $filesystem_args = array())
-	{
+	public function do_restore($full = false, $zip_path, $filesystem_args = array()) {
 		$tmp_dir = self::backups()->get_tmp_dir();
 		$id_prefix = 'restore:';
 
-		$collection = new FW_Ext_Backups_Task_Collection(($full ? 'full' : 'content') . '-restore');
+		$collection = new FW_Ext_Backups_Task_Collection(($full ? 'full' : 'content') .'-restore');
 
 		$collection->add_task(new FW_Ext_Backups_Task(
-			$id_prefix . 'tmp-dir-clean:before',
+			$id_prefix .'tmp-dir-clean:before',
 			'dir-clean',
 			array('dir' => $tmp_dir)
 		));
@@ -1048,8 +999,7 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 		);
 	}
 
-	public function do_cancel()
-	{
+	public function do_cancel() {
 		if (!(
 			($collection = $this->get_active_task_collection())
 			&&
@@ -1060,7 +1010,7 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 			$this->set_active_task_collection(null);
 			file_put_contents($this->get_executed_tasks_path(), '');
 
-			do_action('fw:ext:backups:tasks:cancel:id:' . $collection->get_id());
+			do_action('fw:ext:backups:tasks:cancel:id:'. $collection->get_id());
 
 			return true;
 		}
@@ -1072,8 +1022,7 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 	 *
 	 * @return bool
 	 */
-	public function _filter_fw_ext_backups_db_exclude_option($exclude, $option_name)
-	{
+	public function _filter_fw_ext_backups_db_exclude_option($exclude, $option_name) {
 		if (
 			$option_name === self::$wp_option_pending_task_collections
 			||
@@ -1089,9 +1038,8 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 	 * @param array $options {option_name: true}
 	 * @return array
 	 */
-	public function _filter_fw_ext_backups_db_restore_keep_options($options)
-	{
-		$options[self::$wp_option_pending_task_collections] = true;
+	public function _filter_fw_ext_backups_db_restore_keep_options($options) {
+		$options[ self::$wp_option_pending_task_collections ] = true;
 
 		/**
 		 * This must be (updated) created after step execution
@@ -1102,9 +1050,8 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 		return $options;
 	}
 
-	private function get_executed_tasks_path()
-	{
-		return self::backups()->get_backups_dir() . '/.executed-tasks';
+	private function get_executed_tasks_path() {
+		return self::backups()->get_backups_dir() .'/.executed-tasks';
 	}
 
 	/**
@@ -1114,14 +1061,13 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 	 * @param FW_Ext_Backups_Task $task
 	 * @return bool
 	 */
-	private function was_executed(FW_Ext_Backups_Task $task)
-	{
+	private function was_executed(FW_Ext_Backups_Task $task) {
 		$path = $this->get_executed_tasks_path();
 
 		if (file_exists($path)) {
 			$hashes = array_fill_keys(explode(',', file_get_contents($path)), true);
 
-			if (isset($hashes[md5(serialize($task))])) {
+			if (isset($hashes[ md5(serialize($task)) ])) {
 				if (
 					($mtime = filemtime($path))
 					&&
@@ -1146,8 +1092,7 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 	/**
 	 * @param FW_Ext_Backups_Task $task
 	 */
-	private function set_executed(FW_Ext_Backups_Task $task)
-	{
+	private function set_executed(FW_Ext_Backups_Task $task) {
 		$path = $this->get_executed_tasks_path();
 
 		if (file_exists($path)) {
@@ -1156,7 +1101,7 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 			$hashes = array();
 		}
 
-		$hashes[md5(serialize($task))] = true;
+		$hashes[ md5(serialize($task)) ] = true;
 
 		while (count($hashes) > 3) {
 			array_shift($hashes);
@@ -1169,8 +1114,7 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 	 * @internal
 	 * @param array $data
 	 */
-	public function _shutdown_function($data)
-	{
+	public function _shutdown_function($data) {
 		if (
 			!self::$skip_shutdown_function
 			&&
@@ -1185,7 +1129,7 @@ class _FW_Ext_Backups_Module_Tasks extends _FW_Ext_Backups_Module
 		) {
 			$data['task']->set_result(new WP_Error(
 				'execution_failed',
-				$error['message'] . ' in ' . $error['file'] . ' on line ' . $error['line']
+				$error['message'] .' in '. $error['file'] .' on line '. $error['line']
 			));
 
 			$this->set_active_task_collection($data['collection']);
