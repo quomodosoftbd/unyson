@@ -66,8 +66,7 @@ class FW_Extension_Github_Update extends FW_Ext_Update_Service {
 		$http = new WP_Http();
 
 		$response = $http->get(
-			$this->get_github_api_url( '/repos/' . $user_slash_repo . '/releases/latest' ),
-            [ 'timeout' => 25 ]
+			$this->get_github_api_url( '/repos/' . $user_slash_repo . '/releases/latest' )
 		);
 
 		unset( $http );
@@ -212,8 +211,7 @@ class FW_Extension_Github_Update extends FW_Ext_Update_Service {
 		$http = new WP_Http();
 
 		$response = $http->get(
-			$this->get_github_api_url( '/repos/' . $user_slash_repo . '/releases/tags/' . $version ),
-            [ 'timeout' => 25 ]
+			$this->get_github_api_url( '/repos/' . $user_slash_repo . '/releases/tags/' . $version )
 		);
 
 		unset( $http );

@@ -60,8 +60,7 @@ class FW_Ext_Download_Source_Github extends FW_Ext_Download_Source {
 
 			$response = $http->get(
 				apply_filters( 'fw_github_api_url', 'https://api.github.com' )
-				. '/repos/' . $set['user_repo'] . '/releases/' . $tag,
-                [ 'timeout' => 25 ]
+				. '/repos/' . $set['user_repo'] . '/releases/' . $tag
 			);
 
 			unset( $http );

@@ -118,7 +118,10 @@ class FW_Ext_Backups_Task_Type_Image_Sizes_Restore extends FW_Ext_Backups_Task_T
 						remove_filter('intermediate_image_sizes', array($this, '_filter_image_sizes'));
 					}
 
-					$state['processed_sizes'] = array_merge($state['processed_sizes'], $meta['sizes']);
+					if( isset($state['processed_sizes']) && isset($meta['sizes']) && is_array($state['processed_sizes']) && is_array($meta['sizes'])){
+						$state['processed_sizes'] = array_merge($state['processed_sizes'], $meta['sizes']);
+					}
+					
 				}
 
 				if (isset($meta)) {
