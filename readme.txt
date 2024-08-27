@@ -1,9 +1,9 @@
 === Unyson ===
 Contributors: unyson
 Tags: page builder, editor, drag-and-drop, landing-page, widgets, sidebar, backup, shortcodes, backup, seo, breadcrumbs, portfolio, framework
-Requires at least: 5.5
-Tested up to: 6.4.1
-Stable tag: 3.0.0
+Requires at least: 6.0
+Tested up to: 6.6.1
+Stable tag: 3.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 

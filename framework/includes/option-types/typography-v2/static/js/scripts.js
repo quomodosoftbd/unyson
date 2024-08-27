@@ -2,7 +2,7 @@
 ( function ($) {
 	$(document).ready(function () {
 		var optionTypeClass = '.fw-option-type-typography-v2',
-			googleFonts = fw_typography_v2_fonts['google'],
+			googleFonts = fw_typography_v2_fonts['google'] ?? {},
 			/**
 			 * [ {'value': 'Font Family', 'text': 'Font Family'} ]
 			 */
@@ -24,13 +24,17 @@
 						});
 					});
 
-					_.each(googleFonts['items'], function (item) {
-						fontsOptionsHTML[item['family']] = '<option value="' + item['family'] + '">' + item['family'] + '</option>';
-						fontsOptions.push({
-							value: item['family'],
-							text: item['family']
+
+					if(googleFonts['items']){
+						_.each(googleFonts['items'], function (item) {
+							fontsOptionsHTML[item['family']] = '<option value="' + item['family'] + '">' + item['family'] + '</option>';
+							fontsOptions.push({
+								value: item['family'],
+								text: item['family']
+							});
 						});
-					});
+					}
+					
 				}
 
 				return fontsOptions;
