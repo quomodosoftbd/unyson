@@ -51,42 +51,43 @@ class FW_Option_Type_Typography_v2 extends FW_Option_Type
 	 * @return array
 	 */
 	public function get_fonts()
-	{
-		$cache_key = 'fw_option_type/' . $this->get_type();
+{
+    $cache_key = 'fw_option_type/' . $this->get_type();
 
-		try {
-			return FW_Cache::get($cache_key);
-		} catch (FW_Cache_Not_Found_Exception $e) {
-			$fonts = array(
-				'standard' => apply_filters('fw_option_type_typography_v2_standard_fonts', array(
-					"Arial",
-					"Verdana",
-					"Trebuchet",
-					"Georgia",
-					"Times New Roman",
-					"Tahoma",
-					"Palatino",
-					"Helvetica",
-					"Calibri",
-					"Myriad Pro",
-					"Lucida",
-					"Arial Black",
-					"Gill Sans",
-					"Geneva",
-					"Impact",
-					"Serif"
-				)),
-				'google' => apply_filters(
-					'fw_option_type_typography_v2_google_fonts',
-					json_decode(fw_get_google_fonts_v2(), true)
-				)
-			);
+    try {
+        return FW_Cache::get($cache_key);
+    } catch (FW_Cache_Not_Found_Exception $e) {
+        $fonts = array(
+            'standard' => apply_filters('fw_option_type_typography_v2_standard_fonts', array(
+                "Arial",
+                "Verdana",
+                "Trebuchet",
+                "Georgia",
+                "Times New Roman",
+                "Tahoma",
+                "Palatino",
+                "Helvetica",
+                "Calibri",
+                "Myriad Pro",
+                "Lucida",
+                "Arial Black",
+                "Gill Sans",
+                "Geneva",
+                "Impact",
+                "Serif"
+            )),
+            'google' => apply_filters(
+                'fw_option_type_typography_v2_google_fonts',
+                json_decode(fw_get_google_fonts_v2(), true) // Decode JSON string to array
+            )
+        );
 
-			FW_Cache::set($cache_key, $fonts);
+        FW_Cache::set($cache_key, $fonts);
 
-			return $fonts;
-		}
-	}
+        return $fonts;
+    }
+}
+
 
 	/**
 	 * @internal
